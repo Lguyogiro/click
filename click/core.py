@@ -680,9 +680,13 @@ class BaseCommand(object):
             _check_for_unicode_literals()
         if PY2:
             if args is None:
-                args = [arg.decode(encoding) for arg in get_os_args()]
+                args = [arg.decode(encoding) 
+                        if isinstance(arg, basestring) else arg 
+                        for arg in get_os_args()]
             else:
-                args = [arg.decode(encoding) for arg in args]
+                args = [arg.decode(encoding) 
+                        if isinstance(arg, basestring) else arg 
+                        for arg in args]
         else:
             if args is None:
                 args = get_os_args()
