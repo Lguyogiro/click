@@ -636,7 +636,7 @@ class BaseCommand(object):
         raise NotImplementedError('Base commands are not invokable by default')
 
     def main(self, args=None, prog_name=None, complete_var=None,
-             standalone_mode=True, **extra):
+             standalone_mode=True, encoding='utf-8', **extra):
         """This is the way to invoke a script with all the bells and
         whistles as a command line application.  This will always terminate
         the application after a call.  If this is not wanted, ``SystemExit``
@@ -676,11 +676,16 @@ class BaseCommand(object):
             _verify_python3_env()
         else:
             _check_for_unicode_literals()
-
-        if args is None:
-            args = get_os_args()
+        if PY2:
+            if args is None:
+                args = [arg.decode(encoding) for arg in get_os_args()]
+            else:
+                args = [arg.decode(encoding) for arg in args]
         else:
-            args = list(args)
+            if args is None:
+                args = get_os_args()
+            else:
+                args = list(args)
 
         if prog_name is None:
             prog_name = make_str(os.path.basename(
